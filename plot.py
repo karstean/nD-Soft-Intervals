@@ -14,11 +14,11 @@ from TwoD import TwoD
 #               help='The lower and upper bounds of the classifier. Ex. "0.2, 0.3"')
 @click.option('--n_points', type=int, default=100,
               help='How many points should be rendered?')
-@click.option('--range', type=str, default="0. 1.",
+@click.option('--r', type=str, default=None,
               help='Graph range. Eg.: \"0., 1.\"')
 @click.option('--show_hard', type=bool, default=False,
               help='Should the hard interval be shown too? True/False')
-def plot(dim, bounds, n_points, range, show_hard):
+def plot(dim, bounds, n_points, r, show_hard):
     """Prints a graph of the Soft Interval for a DIM-dimensional
     Classifier with BOUNDS. Please enter BOUNDS in quotation marks.
     Ex.: \"0.2 0.3\". For multi dimensional bounds please enter the
@@ -26,13 +26,13 @@ def plot(dim, bounds, n_points, range, show_hard):
     \"lower-x upper-x lower-y upper-y\""""
 
     bounds = tuple(map(float, bounds.split()))
-    range = tuple(map(float, range.split()))
+    r = tuple(map(float, r.split())) if r is not None else None
     p = None
 
     if dim == 1:
-        p = OneD(*bounds, n_points, range, show_hard)
+        p = OneD(*bounds, n_points, r, show_hard)
     elif dim == 2:
-        p = TwoD(*bounds, n_points, range, show_hard)
+        p = TwoD(*bounds, n_points, r, show_hard)
     else:
         print("Sorry, I've got nothing :(")
         exit(0)

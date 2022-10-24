@@ -1,24 +1,31 @@
 import math
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class OneD:
-    def __init__(self, l_k, u_k, n_points=100, range=(0, 1), show_hard=False):
+    def __init__(self, l_k, u_k, n_points=100, r=None, show_hard=False):
         self.l_k = l_k  # Lower bound
         self.u_k = u_k  # Upper bound
 
-        self.n_points = n_points    # How many points should be rendered for the line
-        self.range = range          # Show Graph in range
-
-        self.show_hard = show_hard  # Show what a hard interval would look like in this case
+        # Show what a hard interval would look like in this case
+        self.show_hard = show_hard
 
         # Various help variables for soft interval calculation
         self.b_k = self.u_k - self.l_k
-        self.sigma = ((1 / 0.95 - 1) / (1 - 0.6227 * math.sqrt(2 * math.pi))) * self.b_k
+        self.sigma = ((1 / 0.95 - 1) /
+                      (1 - 0.6227 * math.sqrt(2 * math.pi))) * self.b_k
         self.l_k_dash = l_k + 0.0566 * self.b_k
         self.u_k_dash = u_k - 0.0566 * self.b_k
 
+        # How many points should be rendered for the line
+        self.n_points = n_points
+        # Show Graph in range "range" if the user provided a range or
+        # with a MARGIN% margin on both sides
+        self.margin = 0.5
+        self.offset = round(self.b_k * self.margin, 2)
+        self.range = r if r is not None else \
+            (self.l_k - self.offset, self.u_k + self.offset)
         # Points to be rendered
         self.line = np.linspace(self.range[0], self.range[1], self.n_points)
 
@@ -27,11 +34,12 @@ class OneD:
         plt.style.use("seaborn-darkgrid")
 
         if self.show_hard:
-            plt.plot(self.line, self.hard_interval(), color='blue', label="hard interval")
+            plt.plot(self.line, self.hard_interval(), color='blue',
+                     label="hard interval")
         plt.plot(self.line, self.m_k(), color='red', label="soft interval")
 
-        plt.title(f"Match probabilities for the classifier [{self.l_k}, {self.u_k}] "
-                  f"in range [{self.range[0]}, {self.range[1]}]")
+        plt.title(f"Match probabilities for the classifier "
+                  f"[{self.l_k}, {self.u_k}]")
         plt.xlabel('Inputs')
         plt.ylabel('Match probability')
         plt.legend()
@@ -44,9 +52,11 @@ class OneD:
 
         for x in self.line:
             if x < self.l_k_dash:
-                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) * (x - self.l_k_dash) ** 2))
+                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) *
+                                    (x - self.l_k_dash) ** 2))
             elif x > self.u_k_dash:
-                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) * (x - self.u_k_dash) ** 2))
+                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) *
+                                    (x - self.u_k_dash) ** 2))
             else:
                 res.append(1)
 
