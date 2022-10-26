@@ -1,6 +1,7 @@
 import math
-import matplotlib.pyplot as plt
+
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class OneD:
@@ -13,10 +14,10 @@ class OneD:
 
         # Various help variables for soft interval calculation
         self.b_k = self.u_k - self.l_k
-        self.sigma = ((1 / 0.95 - 1) /
-                      (1 - 0.6227 * math.sqrt(2 * math.pi))) * self.b_k
-        self.l_k_dash = l_k + 0.0566 * self.b_k
-        self.u_k_dash = u_k - 0.0566 * self.b_k
+        self.sigma = ((1/0.95 - 1)
+                      / (1 - 0.6227*math.sqrt(2*math.pi)))*self.b_k
+        self.l_k_dash = l_k + 0.0566*self.b_k
+        self.u_k_dash = u_k - 0.0566*self.b_k
 
         # How many points should be rendered for the line
         self.n_points = n_points
@@ -24,8 +25,8 @@ class OneD:
         # with a MARGIN% margin on both sides
         self.margin = 0.5
         self.offset = round(self.b_k * self.margin, 2)
-        self.range = r if r is not None else \
-            (self.l_k - self.offset, self.u_k + self.offset)
+        self.range = r if r is not None \
+            else (self.l_k - self.offset, self.u_k + self.offset)
         # Points to be rendered
         self.line = np.linspace(self.range[0], self.range[1], self.n_points)
 
@@ -34,42 +35,29 @@ class OneD:
         plt.style.use("seaborn-darkgrid")
 
         if self.show_hard:
-            plt.plot(self.line, self.hard_interval(), color='blue',
+            plt.plot(self.line, self.hard_interval(), color="blue",
                      label="hard interval")
         plt.plot(self.line, self.m_k(), color='red', label="soft interval")
 
         plt.title(f"Match probabilities for the classifier "
                   f"[{self.l_k}, {self.u_k}]")
-        plt.xlabel('Inputs')
-        plt.ylabel('Match probability')
+        plt.xlabel("Inputs")
+        plt.ylabel("Match probability")
         plt.legend()
 
         plt.show()
 
     # 1D soft interval
     def m_k(self):
-        res = []
+        f = -(1/(2*self.sigma**2))
 
-        for x in self.line:
-            if x < self.l_k_dash:
-                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) *
-                                    (x - self.l_k_dash) ** 2))
-            elif x > self.u_k_dash:
-                res.append(math.exp(-(1 / (2 * self.sigma ** 2)) *
-                                    (x - self.u_k_dash) ** 2))
-            else:
-                res.append(1)
-
-        return res
+        return [math.exp(f*(x - self.l_k_dash)**2) if x < self.l_k_dash
+                else math.exp(f*(x - self.u_k_dash)**2) if x > self.u_k_dash
+                else 1 for x in self.line]
 
     # 1D hard interval
     def hard_interval(self):
-        res = []
-
-        for x in self.line:
-            res.append(1 if self.l_k < x < self.u_k else 0)
-
-        return res
+        return [1 if self.l_k < x < self.u_k else 0 for x in self.line]
 
 
 if __name__ == "__main__":

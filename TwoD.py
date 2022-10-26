@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -53,12 +52,13 @@ class TwoD:
     def plot(self):
         plt.style.use("seaborn-darkgrid")
 
-        ax = plt.axes(projection='3d')
+        ax = plt.axes(projection="3d")
 
         if self.show_hard:
             surf = ax.plot_surface(self.X, self.Y, self.hard_interval(),
                                    color="b", label="hard interval")
-        # surf = ax.plot_surface(self.X, self.Y, self.m_k(), label="soft interval")
+        # surf = ax.plot_surface(self.X, self.Y, self.m_k(),
+        #                        label="soft interval")
 
         plt.title(f"Match probabilities for the classifier "
                   f"[{self.l_k_1}, {self.u_k_1}, {self.l_k_2}, {self.u_k_2}]")
