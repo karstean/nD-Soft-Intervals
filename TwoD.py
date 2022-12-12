@@ -83,7 +83,8 @@ class TwoD:
         for i, x in enumerate(self.x):
             for j, y in enumerate(self.y):
                 res[i, j] = 1. if (self.l_k_1 < x < self.u_k_1 and
-                                   self.l_k_2 < y < self.u_k_2) else 0.
+                                   self.l_k_2 < y < self.u_k_2) \
+                                else np.finfo(None).tiny
         return res
 
 

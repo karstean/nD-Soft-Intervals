@@ -12,9 +12,16 @@ from TwoD import TwoD
 @click.option('-r', type=str, default=None,
               help='Graph range. Ex.: "0., 1.". If range is not given the '
                    'graph will be displayed with an offset to both sides.')
+@click.option('-a', '--a_points', type=int, default=1000000,
+              help='How many points should be used to estimate the area under '
+                   'the graph curves? (Works only for dim 1)')
 @click.option('--show_hard', type=bool, default=False,
               help='Should the hard interval be shown too? True/False')
-def plot(dim, bounds, n_points, r, show_hard):
+@click.option('--print_ratio', type=bool, default=True,
+              help='Should the estimated ratio of hard interval to soft '
+                   'interval area be printed? True/False '
+                   '(Works only for dim 1)')
+def plot(dim, bounds, n_points, r, show_hard, a_points, print_ratio):
     """Prints a graph of the Soft Interval for a DIM-dimensional
     Classifier with BOUNDS. Please enter BOUNDS in quotation marks.
     Ex.: "0.2 0.3". For multidimensional bounds please enter the
@@ -28,7 +35,7 @@ def plot(dim, bounds, n_points, r, show_hard):
     p = None
 
     if dim == 1:
-        p = OneD(*bounds, n_points, r, show_hard)
+        p = OneD(*bounds, n_points, r, show_hard, a_points, print_ratio)
     elif dim == 2:
         p = TwoD(*bounds, n_points, r, show_hard)
     else:
