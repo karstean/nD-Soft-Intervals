@@ -40,7 +40,13 @@ class OneD:
     # Create and show plot
     def plot(self):
         if self.print_ratio:
-            self.area_ratio()
+            below_hard, below_soft = self.area_ratio()
+            print(f"Number of points below the hard interval: {below_hard} "
+                  f"out of {self.a_points} \n"
+                  f"Number of points below the soft interval: {below_soft} "
+                  f"out of {self.a_points} \n "
+                  f"Ratio of the estimated area hard / soft: "
+                  f"{below_hard / below_soft}")
 
         plt.style.use("seaborn-darkgrid")
 
@@ -92,12 +98,7 @@ class OneD:
             if m_k >= point[1]:
                 below_soft += 1
 
-        print(f"Number of points below the hard interval: {below_hard} "
-              f"out of {self.a_points} \n"
-              f"Number of points below the soft interval: {below_soft} "
-              f"out of {self.a_points} \n "
-              f"Ratio of the estimated area hard / soft: "
-              f"{below_hard / below_soft}")
+        return below_hard, below_soft
 
 
 if __name__ == "__main__":
